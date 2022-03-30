@@ -1,7 +1,21 @@
 api_platform:
+    title: 'API Usine'
+    description: 'Gestion des données organisationnelle, du personnel au services en passant par les plannings'
+    version: '1.0.0'
     mapping:
         paths: ['%kernel.project_dir%/src/Entity']
     patch_formats:
         json: ['application/merge-patch+json']
     swagger:
         versions: [3]
+    formats:
+        json:
+            mime_types: ['application/json']
+            
+        jsonld:
+            mime_types: ['application/ld+json']
+
+        html:
+            mime_types: ['text/html']
+    defaults:
+        pagination_enabled: false
