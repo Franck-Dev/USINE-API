@@ -95,14 +95,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @Assert\NotBlank()
-     * @Groups({"user:write"})
+     * @Groups({"user:write","user:read"})
      * @ORM\Column(type="string", length=255)
      */
     private $nom;
 
     /**
      * @Assert\NotBlank()
-     * @Groups({"user:write"})
+     * @Groups({"user:write","user:read"})
      * @ORM\Column(type="string", length=255)
      */
     private $prenom;
