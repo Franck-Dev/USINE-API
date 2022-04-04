@@ -154,10 +154,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $programmeAvion;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=GroupeAffectation::class, mappedBy="propriétaire")
+     */
+    private $groupeAffectations;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Division::class, inversedBy="users")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $unite;
+
     public function __construct()
     {
         $this->moldings = new ArrayCollection();
         $this->programmeAvion = new ArrayCollection();
+        $this->groupeAffectations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -384,6 +396,45 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeProgrammeAvion(ProgrammeAvion $programmeAvion): self
     {
         $this->programmeAvion->removeElement($programmeAvion);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, GroupeAffectation>
+     */
+    public function getGroupeAffectations(): Collection
+    {
+        return $this->groupeAffectations;
+    }
+
+    public function addGroupeAffectation(GroupeAffectation $groupeAffectation): self
+    {
+        if (!$this->groupeAffectations->contains($groupeAffectation)) {
+            $this->groupeAffectations[] = $groupeAffectation;
+            $groupeAffectation->addPropriTaire($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGroupeAffectation(GroupeAffectation $groupeAffectation): self
+    {
+        if ($this->groupeAffectations->removeElement($groupeAffectation)) {
+            $groupeAffectation->removePropriTaire($this);
+        }
+
+        return $this;
+    }
+
+    public function getUnite(): ?Division
+    {
+        return $this->unite;
+    }
+
+    public function setUnite(?Division $unite): self
+    {
+        $this->unite = $unite;
 
         return $this;
     }
