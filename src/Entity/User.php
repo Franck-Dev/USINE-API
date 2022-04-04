@@ -167,6 +167,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $unite;
 
+    /**
+     * @Groups({"user:read","user:write"})
+     * @ORM\ManyToOne(targetEntity=Usine::class, inversedBy="users")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $site;
+
     public function __construct()
     {
         $this->moldings = new ArrayCollection();
@@ -437,6 +444,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUnite(?Division $unite): self
     {
         $this->unite = $unite;
+
+        return $this;
+    }
+
+    public function getSite(): ?Usine
+    {
+        return $this->site;
+    }
+
+    public function setSite(?Usine $site): self
+    {
+        $this->site = $site;
 
         return $this;
     }

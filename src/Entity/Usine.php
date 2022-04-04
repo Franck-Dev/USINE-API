@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *  denormalizationContext={"groups"={"usine:write"}},
  * )
  * @ORM\Entity(repositoryClass=UsineRepository::class)
- * @UniqueEntity(fields={"libelle"})
+ * @UniqueEntity(fields={"nom"})
  */
 class Usine
 {
@@ -44,9 +44,15 @@ class Usine
      */
     private $divisions;
 
+    /**
+     * @ORM\OneToMany(targetEntity=User::class, mappedBy="site")
+     */
+    private $users;
+
     public function __construct()
     {
         $this->divisions = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -90,6 +96,36 @@ class Usine
             // set the owning side to null (unless already changed)
             if ($division->getEntreprise() === $this) {
                 $division->setEntreprise(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->setSite($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            // set the owning side to null (unless already changed)
+            if ($user->getSite() === $this) {
+                $user->setSite(null);
             }
         }
 
