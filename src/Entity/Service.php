@@ -2,13 +2,14 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ServiceRepository;
+use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ApiResource(
@@ -18,6 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *  denormalizationContext={"groups"={"serv:write"}},
  * )
  * @ORM\Entity(repositoryClass=ServiceRepository::class)
+ * @UniqueEntity(fields={"nom"})
  */
 class Service
 {
@@ -34,9 +36,10 @@ class Service
      * @Assert\NotBlank()
      * @ORM\Column(type="string", length=255)
      */
-    private $Nom;
+    private $nom;
 
     /**
+     * @Groups({"serv:read"})
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="service")
      */
     private $users;
@@ -53,12 +56,12 @@ class Service
 
     public function getNom(): ?string
     {
-        return $this->Nom;
+        return $this->nom;
     }
 
-    public function setNom(string $Nom): self
+    public function setNom(string $nom): self
     {
-        $this->Nom = $Nom;
+        $this->nom = $nom;
 
         return $this;
     }

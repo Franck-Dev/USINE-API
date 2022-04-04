@@ -2,19 +2,29 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\UsineRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UsineRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ * collectionOperations={"get","post"},
+ *  itemOperations={"get"},
+ *  normalizationContext={"groups"={"usine:read"}},
+ *  denormalizationContext={"groups"={"usine:write"}},
+ * )
  * @ORM\Entity(repositoryClass=UsineRepository::class)
+ * @UniqueEntity(fields={"libelle"})
  */
 class Usine
 {
     /**
+     * @Groups({"usine:read"})
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -22,11 +32,14 @@ class Usine
     private $id;
 
     /**
+     * @Groups({"usine:read","usine:write"})
+     * @Assert\NotBlank()
      * @ORM\Column(type="string", length=255)
      */
     private $nom;
 
     /**
+     * @Groups({"usine:read"})
      * @ORM\OneToMany(targetEntity=Division::class, mappedBy="Entreprise")
      */
     private $divisions;

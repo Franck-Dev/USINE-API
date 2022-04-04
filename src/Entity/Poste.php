@@ -2,13 +2,14 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\PosteRepository;
+use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ApiResource(
@@ -18,6 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *  denormalizationContext={"groups"={"poste:write"}},
  * )
  * @ORM\Entity(repositoryClass=PosteRepository::class)
+ * @UniqueEntity(fields={"libelle"})
  */
 class Poste
 {

@@ -2,13 +2,14 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ProgrammeAvionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ApiResource(
@@ -18,6 +19,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *  denormalizationContext={"groups"={"progAv:write"}},
  * )
  * @ORM\Entity(repositoryClass=ProgrammeAvionRepository::class)
+ * @UniqueEntity(fields={"designation"})
+ * @UniqueEntity(fields={"code"})
  */
 class ProgrammeAvion
 {
@@ -34,13 +37,13 @@ class ProgrammeAvion
      * @Assert\NotBlank()
      * @ORM\Column(type="string", length=255)
      */
-    private $Designation;
+    private $designation;
 
     /**
      * @Groups({"progAv:read","progAv:write"})
      * @ORM\Column(type="string", length=6, nullable=true)
      */
-    private $Code;
+    private $code;
 
     /**
      * @Groups({"progAv:read","progAv:write"})
@@ -66,24 +69,24 @@ class ProgrammeAvion
 
     public function getDesignation(): ?string
     {
-        return $this->Designation;
+        return $this->designation;
     }
 
-    public function setDesignation(string $Designation): self
+    public function setDesignation(string $designation): self
     {
-        $this->Designation = $Designation;
+        $this->designation = $designation;
 
         return $this;
     }
 
     public function getCode(): ?string
     {
-        return $this->Code;
+        return $this->code;
     }
 
-    public function setCode(?string $Code): self
+    public function setCode(?string $code): self
     {
-        $this->Code = $Code;
+        $this->code = $code;
 
         return $this;
     }

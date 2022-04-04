@@ -2,19 +2,29 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\DivisionRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\DivisionRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ * collectionOperations={"get","post"},
+ *  itemOperations={"get"},
+ *  normalizationContext={"groups"={"div:read"}},
+ *  denormalizationContext={"groups"={"div:write"}},
+ * )
  * @ORM\Entity(repositoryClass=DivisionRepository::class)
+ * @UniqueEntity(fields={"nom"})
  */
 class Division
 {
     /**
+     * @Groups({"div:read"})
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -22,17 +32,21 @@ class Division
     private $id;
 
     /**
+     * @Groups({"div:read","div:write","usine:read"})
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $nom;
 
     /**
+     * @Groups({"div:read","div:write"})
      * @ORM\ManyToOne(targetEntity=Usine::class, inversedBy="divisions")
      * @ORM\JoinColumn(nullable=false)
      */
     private $Entreprise;
 
     /**
+     * @Groups({"div:read"})
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="unite")
      */
     private $users;

@@ -155,11 +155,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $programmeAvion;
 
     /**
+     * @Groups({"user:read"})
      * @ORM\ManyToMany(targetEntity=GroupeAffectation::class, mappedBy="propriétaire")
      */
     private $groupeAffectations;
 
     /**
+     * @Groups({"user:read","user:write"})
      * @ORM\ManyToOne(targetEntity=Division::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
      */
