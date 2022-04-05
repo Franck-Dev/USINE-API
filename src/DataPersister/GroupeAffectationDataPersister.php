@@ -6,6 +6,7 @@ namespace App\DataPersister;
 
 use App\Entity\GroupeAffectation;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Security;
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 
 class GroupeAffectationDataPersister implements ContextAwareDataPersisterInterface
@@ -15,11 +16,18 @@ class GroupeAffectationDataPersister implements ContextAwareDataPersisterInterfa
      */
     private $_entityManager;
 
+/**
+     *
+     * @var Security
+     */
+    private $_security;
+
     public function __construct(
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager, Security $security
     )
     {
         $this->_entityManager = $entityManager;
+        $this->_security = $security;
     }
 
     /**
@@ -33,8 +41,16 @@ class GroupeAffectationDataPersister implements ContextAwareDataPersisterInterfa
 
     public function persist($data, array $context = [])
     {
-        $data->setCreatedAt(new \DateTimeImmutable());
-        
+        if (!$data->getCreatedAt()) {
+            
+            $data->setCreatedAt(new \DateTimeImmutable());
+            $data->setProprietaire($this->_security->getUser());
+
+        } else {
+            
+            $data->setDateDernierAjout(new \DateTimeImmutable());
+        }
+
         $this->_entityManager->persist($data);
         $this->_entityManager->flush();
     }

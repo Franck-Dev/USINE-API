@@ -61,7 +61,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $id;
 
     /**
-     * @Groups({"user:read","layer:read"})
+     * @Groups({"user:read","layer:read","userGroups:affect"})
      * @ORM\Column(type="string", length=180, unique=true)
      */
     private $username;
@@ -155,8 +155,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $programmeAvion;
 
     /**
-     * @Groups({"user:read"})
-     * @ORM\ManyToMany(targetEntity=GroupeAffectation::class, mappedBy="propriétaire")
+     * @Groups({"user:read","userGroups:affect"})
+     * @ORM\OneToMany(targetEntity=GroupeAffectation::class, mappedBy="proprietaire")
      */
     private $groupeAffectations;
 
@@ -174,11 +174,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $site;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=GroupeAffectation::class, mappedBy="population")
+     */
+    private $groupeAffected;
+
     public function __construct()
     {
         $this->moldings = new ArrayCollection();
         $this->programmeAvion = new ArrayCollection();
         $this->groupeAffectations = new ArrayCollection();
+        $this->groupeAffected = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -419,9 +425,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addGroupeAffectation(GroupeAffectation $groupeAffectation): self
     {
-        if (!$this->groupeAffectations->contains($groupeAffectation)) {
-            $this->groupeAffectations[] = $groupeAffectation;
-            $groupeAffectation->addPropriTaire($this);
+        if (!$this->users->contains($groupeAffectation)) {
+            $this->users[] = $groupeAffectation;
+            $groupeAffectation->setProprietaire($this);
         }
 
         return $this;
@@ -429,8 +435,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeGroupeAffectation(GroupeAffectation $groupeAffectation): self
     {
-        if ($this->groupeAffectations->removeElement($groupeAffectation)) {
-            $groupeAffectation->removePropriTaire($this);
+        if ($this->users->removeElement($groupeAffectation)) {
+            // set the owning side to null (unless already changed)
+            if ($groupeAffectation->getProprietaire() === $this) {
+                $groupeAffectation->setProprietaire(null);
+            }
         }
 
         return $this;
@@ -456,6 +465,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setSite(?Usine $site): self
     {
         $this->site = $site;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, GroupeAffectation>
+     */
+    public function getGroupeAffected(): Collection
+    {
+        return $this->groupeAffected;
+    }
+
+    public function addGroupeAffected(GroupeAffectation $groupeAffected): self
+    {
+        if (!$this->groupeAffected->contains($groupeAffected)) {
+            $this->groupeAffected[] = $groupeAffected;
+            $groupeAffected->addPopulation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGroupeAffected(GroupeAffectation $groupeAffected): self
+    {
+        if ($this->groupeAffected->removeElement($groupeAffected)) {
+            $groupeAffected->removePopulation($this);
+        }
 
         return $this;
     }

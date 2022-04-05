@@ -2,19 +2,32 @@
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+use App\Controller\OrgaController;
+use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\GroupeAffectationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ApiResource(
- * collectionOperations={"get","post"},
- *  itemOperations={"get"},
+ * collectionOperations={
+*              "get","post"
+*   },
+ *  itemOperations={"get",
+ *                  "patch"={
+*                  "method"="PATCH",
+*                  "path"="/groupe_affectations/{id}/addUsers",
+*                  "controller"=OrgaController::class,
+*                   "openapi_context"={
+*                       "summary"="Permet d'ajouter des utilisateurs au Groupe"    
+*                   },
+*                  "denormalization_context"={"groups"={"gr_affect:addusers"}}
+*              }
+*   },
  *  normalizationContext={"groups"={"gr_affect:read"}},
  *  denormalizationContext={"groups"={"gr_affect:write"}},
  * )
@@ -33,16 +46,16 @@ class GroupeAffectation
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"gr_affect:read","gr_affect:write"})
+     * @Groups({"gr_affect:read","gr_affect:write","user:read"})
      * @Assert\NotBlank()
      */
     private $libelle;
 
     /**
      * @Groups({"gr_affect:read"})
-     * @ORM\ManyToMany(targetEntity=User::class, inversedBy="groupeAffectations")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="groupeAffectations")
      */
-    private $propriétaire;
+    private $proprietaire;
 
     /**
      * @Groups({"gr_affect:read"})
@@ -50,9 +63,21 @@ class GroupeAffectation
      */
     private $createdAt;
 
+    /**
+     * @Groups({"gr_affect:read","gr_affect:addusers"})
+     * @ORM\ManyToMany(targetEntity=User::class, inversedBy="groupeAffected")
+     */
+    private $population;
+
+    /**
+     * @ORM\Column(type="datetime_immutable", nullable=true)
+     */
+    private $dateDernierAjout;
+
     public function __construct()
     {
         $this->propriétaire = new ArrayCollection();
+        $this->population = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -72,26 +97,14 @@ class GroupeAffectation
         return $this;
     }
 
-    /**
-     * @return Collection<int, User>
-     */
-    public function getPropriétaire(): Collection
+    public function getProprietaire(): ?User
     {
-        return $this->propriétaire;
+        return $this->proprietaire;
     }
 
-    public function addPropriTaire(User $propriTaire): self
+    public function setProprietaire(?User $proprietaire): self
     {
-        if (!$this->propriétaire->contains($propriTaire)) {
-            $this->propriétaire[] = $propriTaire;
-        }
-
-        return $this;
-    }
-
-    public function removePropriTaire(User $propriTaire): self
-    {
-        $this->propriétaire->removeElement($propriTaire);
+        $this->proprietaire = $proprietaire;
 
         return $this;
     }
@@ -104,6 +117,42 @@ class GroupeAffectation
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getPopulation(): Collection
+    {
+        return $this->population;
+    }
+
+    public function addPopulation(User $population): self
+    {
+        if (!$this->population->contains($population)) {
+            $this->population[] = $population;
+        }
+
+        return $this;
+    }
+
+    public function removePopulation(User $population): self
+    {
+        $this->population->removeElement($population);
+
+        return $this;
+    }
+
+    public function getDateDernierAjout(): ?\DateTimeImmutable
+    {
+        return $this->dateDernierAjout;
+    }
+
+    public function setDateDernierAjout(?\DateTimeImmutable $dateDernierAjout): self
+    {
+        $this->dateDernierAjout = $dateDernierAjout;
 
         return $this;
     }

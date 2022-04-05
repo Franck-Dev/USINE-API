@@ -32,7 +32,7 @@ class Usine
     private $id;
 
     /**
-     * @Groups({"usine:read","usine:write"})
+     * @Groups({"usine:read","usine:write","user:read"})
      * @Assert\NotBlank()
      * @ORM\Column(type="string", length=255)
      */

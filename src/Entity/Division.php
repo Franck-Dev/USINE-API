@@ -32,7 +32,7 @@ class Division
     private $id;
 
     /**
-     * @Groups({"div:read","div:write","usine:read"})
+     * @Groups({"div:read","div:write","usine:read","user:read"})
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank()
      */

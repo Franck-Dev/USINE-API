@@ -33,7 +33,7 @@ class ProgrammeAvion
     private $id;
 
     /**
-     * @Groups({"progAv:read","progAv:write"})
+     * @Groups({"progAv:read","progAv:write","user:read"})
      * @Assert\NotBlank()
      * @ORM\Column(type="string", length=255)
      */
