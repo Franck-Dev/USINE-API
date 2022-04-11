@@ -44,9 +44,17 @@ class Service
      */
     private $users;
 
+    
+    /**
+     * @Groups({"user:read","userGroups:affect"})
+     * @ORM\OneToMany(targetEntity=GroupeAffectation::class, mappedBy="proprietaire")
+     */
+    private $groupeAffectations;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->groupeAffectations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -90,6 +98,36 @@ class Service
             // set the owning side to null (unless already changed)
             if ($user->getService() === $this) {
                 $user->setService(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, GroupeAffectation>
+     */
+    public function getGroupeAffectations(): Collection
+    {
+        return $this->groupeAffectations;
+    }
+
+    public function addGroupeAffectation(GroupeAffectation $groupeAffectation): self
+    {
+        if (!$this->users->contains($groupeAffectation)) {
+            $this->users[] = $groupeAffectation;
+            $groupeAffectation->setProprietaire($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGroupeAffectation(GroupeAffectation $groupeAffectation): self
+    {
+        if ($this->users->removeElement($groupeAffectation)) {
+            // set the owning side to null (unless already changed)
+            if ($groupeAffectation->getProprietaire() === $this) {
+                $groupeAffectation->setProprietaire(null);
             }
         }
 

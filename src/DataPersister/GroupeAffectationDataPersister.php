@@ -44,10 +44,9 @@ class GroupeAffectationDataPersister implements ContextAwareDataPersisterInterfa
         if (!$data->getCreatedAt()) {
             
             $data->setCreatedAt(new \DateTimeImmutable());
-            $data->setProprietaire($this->_security->getUser());
+            $data->setProprietaire($this->_security->getUser()->getService());
 
         } else {
-            
             $data->setDateDernierAjout(new \DateTimeImmutable());
         }
 

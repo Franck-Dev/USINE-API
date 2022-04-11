@@ -57,9 +57,24 @@ class UserDataPersister implements ContextAwareDataPersisterInterface
                 $data->setPassword($hash);
             }
         }
-        $pseudo=strtolower(substr($data->getPrenom(),0,1).".".$data->getNom());
-        $data->setUsername($pseudo);
-        $data->setMail($pseudo."@daher.com");
+        //Gestion de l'adresse mail suivant poste avec pseudo ou matricule ou "-ext" ou manu
+        if (!$data->getMail())
+        {
+            $pseudo=strtolower(substr($data->getPrenom(),0,1).".".$data->getNom());
+            $data->setUsername($pseudo);
+            if ($data->getService()->getNom() == "EXTERIEUR")
+            {
+                $data->setMail($pseudo."-ext@daher.com");
+            } else {
+                $data->setMail($pseudo."@daher.com");
+            }
+            if ($data->getPoste()->getLibelle() == "Operateur")
+            {
+                $data->setMail($data->getMatricule()."@daher.com");
+            }
+        } else {
+
+        }
         $data->setRoles($this->getChoiceRole($data));
 
         $this->_entityManager->persist($data);

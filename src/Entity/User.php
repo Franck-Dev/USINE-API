@@ -81,7 +81,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @Assert\Email
-     * @Groups({"user:read"})
+     * @Groups({"user:read", "user:write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $mail;
@@ -133,7 +133,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @Assert\NotBlank()
-     * @Groups({"user:write"})
+     * @Groups({"user:read","user:write"})
      * @ORM\ManyToOne(targetEntity=Poste::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -141,7 +141,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @Assert\NotBlank()
-     * @Groups({"user:write"})
+     * @Groups({"user:read","user:write"})
      * @ORM\ManyToOne(targetEntity=Service::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -153,12 +153,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\ManyToMany(targetEntity=ProgrammeAvion::class, inversedBy="users")
      */
     private $programmeAvion;
-
-    /**
-     * @Groups({"user:read","userGroups:affect"})
-     * @ORM\OneToMany(targetEntity=GroupeAffectation::class, mappedBy="proprietaire")
-     */
-    private $groupeAffectations;
 
     /**
      * @Groups({"user:read","user:write"})
@@ -179,11 +173,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $groupeAffected;
 
+    /**
+     * @Groups({"user:read","user:write"})
+     * @ORM\Column(type="bigint", nullable=true)
+     */
+    private $tel;
+
     public function __construct()
     {
         $this->moldings = new ArrayCollection();
         $this->programmeAvion = new ArrayCollection();
-        $this->groupeAffectations = new ArrayCollection();
         $this->groupeAffected = new ArrayCollection();
     }
 
@@ -415,36 +414,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, GroupeAffectation>
-     */
-    public function getGroupeAffectations(): Collection
-    {
-        return $this->groupeAffectations;
-    }
-
-    public function addGroupeAffectation(GroupeAffectation $groupeAffectation): self
-    {
-        if (!$this->users->contains($groupeAffectation)) {
-            $this->users[] = $groupeAffectation;
-            $groupeAffectation->setProprietaire($this);
-        }
-
-        return $this;
-    }
-
-    public function removeGroupeAffectation(GroupeAffectation $groupeAffectation): self
-    {
-        if ($this->users->removeElement($groupeAffectation)) {
-            // set the owning side to null (unless already changed)
-            if ($groupeAffectation->getProprietaire() === $this) {
-                $groupeAffectation->setProprietaire(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getUnite(): ?Division
     {
         return $this->unite;
@@ -492,6 +461,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->groupeAffected->removeElement($groupeAffected)) {
             $groupeAffected->removePopulation($this);
         }
+
+        return $this;
+    }
+
+    public function getTel(): ?string
+    {
+        return $this->tel;
+    }
+
+    public function setTel(?string $tel): self
+    {
+        $this->tel = $tel;
 
         return $this;
     }

@@ -53,7 +53,7 @@ class GroupeAffectation
 
     /**
      * @Groups({"gr_affect:read"})
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="groupeAffectations")
+     * @ORM\ManyToOne(targetEntity=Service::class, inversedBy="groupeAffectations")
      */
     private $proprietaire;
 
@@ -97,12 +97,12 @@ class GroupeAffectation
         return $this;
     }
 
-    public function getProprietaire(): ?User
+    public function getProprietaire(): ?Service
     {
         return $this->proprietaire;
     }
 
-    public function setProprietaire(?User $proprietaire): self
+    public function setProprietaire(?Service $proprietaire): self
     {
         $this->proprietaire = $proprietaire;
 
