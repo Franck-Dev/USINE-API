@@ -32,7 +32,7 @@ class Service
     private $id;
 
     /**
-     * @Groups({"serv:read","serv:write"})
+     * @Groups({"serv:read","serv:write","user:read"})
      * @Assert\NotBlank()
      * @ORM\Column(type="string", length=255)
      */
@@ -46,7 +46,7 @@ class Service
 
     
     /**
-     * @Groups({"user:read","userGroups:affect"})
+     * @Groups({"serv:read","servGroups:affect"})
      * @ORM\OneToMany(targetEntity=GroupeAffectation::class, mappedBy="proprietaire")
      */
     private $groupeAffectations;
