@@ -169,6 +169,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $site;
 
     /**
+     * @Groups({"user:read"})
      * @ORM\ManyToMany(targetEntity=GroupeAffectation::class, mappedBy="population")
      */
     private $groupeAffected;
