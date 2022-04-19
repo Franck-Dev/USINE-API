@@ -47,7 +47,7 @@ class UserDataPersister implements ContextAwareDataPersisterInterface
             $data->setUpdatedAt(new \DateTimeImmutable());
         } else {
             $data->setCreatedAt(new \DateTimeImmutable());
-            $data->setIsActive(true);
+            $data->setIsActive(false);
             //Si pas de mot de passe, c'est un opérateur et le mot de passe est son matricule
             if (!$data->getPassword()) {
                 $hash=$this->_encoder->hashPassword($data,strval($data->getMatricule()));
@@ -71,6 +71,7 @@ class UserDataPersister implements ContextAwareDataPersisterInterface
             if ($data->getPoste()->getLibelle() == "Operateur")
             {
                 $data->setMail($data->getMatricule()."@daher.com");
+                $data->setIsActive(true);
             }
         } else {
 
@@ -105,14 +106,14 @@ class UserDataPersister implements ContextAwareDataPersisterInterface
                 }else{
                     $roleUser=['ROLE_METHODES'];
                 }
-                break;
+            break;
             case "MOYEN CHAUD":
                 if($poste == "Maitrise"){
                     $roleUser=['ROLE_CE_POLYM'];
                 }else{
                     $roleUser=['ROLE_REGLEUR'];
                 }
-                break;
+            break;
             case "MOULAGE":
                 if($poste == "Maitrise"){
                     $roleUser=['ROLE_CE_MOULAGE'];
@@ -122,7 +123,7 @@ class UserDataPersister implements ContextAwareDataPersisterInterface
                 else{
                     $roleUser=['ROLE_MOULEUR'];
                 }
-                break;
+            break;
             case "ASSEMBLAGE":
                 if($poste == "Maitrise"){
                     $roleUser=['ROLE_CE_ASS'];
@@ -132,7 +133,7 @@ class UserDataPersister implements ContextAwareDataPersisterInterface
                 else{
                     $roleUser=['ROLE_AJUSTEUR'];
                 }
-                break;
+            break;
             case "QUALITE":
                 if($poste == "Maitrise"){
                     $roleUser=['ROLE_CE_QUALITE'];
@@ -142,7 +143,7 @@ class UserDataPersister implements ContextAwareDataPersisterInterface
                 else{
                     $roleUser=['ROLE_CONTROLEUR'];
                 }
-                break;
+            break;
             case "LABO":
                 if($poste == "Maitrise"){
                     $roleUser=['ROLE_CE_LABO'];
@@ -152,17 +153,18 @@ class UserDataPersister implements ContextAwareDataPersisterInterface
                 else{
                     $roleUser=['ROLE_CONTROLEUR_LABO'];
                 }
-                break;
+            break;
             case "OUTILLAGE":
                 if($poste == "Maitrise"){
                     $roleUser=['ROLE_CE_OUTIL'];
                 }elseif($data->getPoste()->getLibelle() == "Responsable"){
                     $roleUser=['ROLE_RESP_OUTIL'];
-                }  
-                else{
+                }elseif($data->getPoste()->getLibelle() == "Controleur"){
+                    $roleUser=['ROLE_CONTROLEUR_OUTIL'];
+                }else{
                     $roleUser=['ROLE_OUTILLEUR'];
                 }
-                break;
+            break;
             case "EXTERIEUR":
                 $roleUser=['ROLE_USER'];
             break;
