@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use App\Controller\SecurityController;
 use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints\Email;
@@ -63,6 +64,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @Groups({"user:read","layer:read","userGroups:affect"})
      * @ORM\Column(type="string", length=180, unique=true)
+     * @ApiProperty(readableLink=true)
      */
     private $username;
 
@@ -81,7 +83,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @Assert\Email
-     * @Groups({"user:read", "user:write"})
+     * @Groups({"user:read"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $mail;
@@ -179,6 +181,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="bigint", nullable=true)
      */
     private $tel;
+
+    /**
+     * @Groups({"user:read"})
+     * @ORM\Column(type="string", length=255)
+     */
+    private $apiToken;
 
     public function __construct()
     {
@@ -474,6 +482,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTel(?string $tel): self
     {
         $this->tel = $tel;
+
+        return $this;
+    }
+
+    public function getApiToken(): ?string
+    {
+        return $this->apiToken;
+    }
+
+    public function setApiToken(string $apiToken): self
+    {
+        $this->apiToken = $apiToken;
 
         return $this;
     }

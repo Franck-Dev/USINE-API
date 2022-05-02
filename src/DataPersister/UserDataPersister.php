@@ -76,7 +76,11 @@ class UserDataPersister implements ContextAwareDataPersisterInterface
         } else {
 
         }
+        //sélection des Roles suivant poste et service
         $data->setRoles($this->getChoiceRole($data));
+
+        //Création d'un token user
+        $data->setapiToken(bin2hex(random_bytes(60)));
 
         $this->_entityManager->persist($data);
         $this->_entityManager->flush();
