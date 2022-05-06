@@ -17,8 +17,9 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * collectionOperations={
 *              "get","post"
 *   },
- *  itemOperations={"get","delete",
+ *  itemOperations={"get","delete"={"security"="is_granted('ROLE_GESTION_EQ')"},
  *                  "patch"={
+ *                  "security"="is_granted('ROLE_GESTION_EQ')",
 *                  "method"="PATCH",
 *                  "path"="/groupe_affectations/{id}/addUsers",
 *                  "controller"=OrgaController::class,
