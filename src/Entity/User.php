@@ -62,14 +62,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $id;
 
     /**
-     * @Groups({"user:read","layer:read","userGroups:affect"})
+     * @Groups({"user:read","layer:read","userGroups:affect","serv:read"})
      * @ORM\Column(type="string", length=180, unique=true)
      * @ApiProperty(readableLink=true)
      */
     private $username;
 
     /**
-     * @Groups({"user:read"})
+     * @Groups({"user:read","serv:read"})
      * @ORM\Column(type="json")
      */
     private $roles = [];
@@ -90,7 +90,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @Assert\NotBlank()
-     * @Groups({"user:read", "user:write","user:login","layer:read"})
+     * @Groups({"user:read", "user:write","user:login","layer:read","serv:read"})
      * @ORM\Column(type="integer", unique=true)
      */
     private $matricule;
@@ -111,7 +111,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="datetime_immutable")
-     * @Groups({"user:read"})
+     * @Groups({"user:read","serv:read"})
      */
     private $createdAt;
 
@@ -122,7 +122,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $updatedAt;
 
     /**
-     * @Groups({"user:read"})
+     * @Groups({"user:read","serv:read"})
      * @ORM\Column(type="boolean")
      */
     private $isActive;
@@ -178,9 +178,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @Groups({"user:read","user:write"})
-     * @ORM\Column(type="bigint", nullable=true)
+     * @ORM\Column(type="array", nullable=true)
      */
-    private $tel;
+    private $tel = [];
 
     /**
      * @Groups({"user:read"})
@@ -474,12 +474,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getTel(): ?string
+    public function getTel(): ?array
     {
         return $this->tel;
     }
 
-    public function setTel(?string $tel): self
+    public function setTel(?array $tel): self
     {
         $this->tel = $tel;
 

@@ -17,7 +17,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * collectionOperations={
 *              "get","post"
 *   },
- *  itemOperations={"get",
+ *  itemOperations={"get","delete",
  *                  "patch"={
 *                  "method"="PATCH",
 *                  "path"="/groupe_affectations/{id}/addUsers",
