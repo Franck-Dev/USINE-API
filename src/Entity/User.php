@@ -183,7 +183,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $tel = [];
 
     /**
-     * @Groups({"user:read"})
      * @ORM\Column(type="string", length=255)
      */
     private $apiToken;
