@@ -8,6 +8,7 @@ use App\Entity\ProgrammeAvion;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use App\Controller\SecurityController;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -17,6 +18,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
@@ -29,12 +33,18 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 *                  "method"="POST",
 *                  "path"="/login",
 *                  "controller"="SecurityController::class",
+*                   "openapi_context"={
+*                       "summary"="Authentification users"    
+*                    },
 *                  "denormalization_context"={"groups"={"user:login"}}
 *              },
 *               "logout"={
 *                   "method"="GET",
 *                   "path"="/logout",
 *                   "controller"="SecurityController::class",
+*                    "openapi_context"={
+*                       "summary"="Logout User"    
+*                    },
 *               }
  *       },
  * itemOperations={
@@ -43,8 +53,21 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
  *              "patch"={"security"="is_granted('ROLE_USER')"},
  *              "delete"={"security"="is_granted('ROLE_ADMIN')"},
  * },
+ *     order={"id" ="DESC"},
+ *     attributes={"pagination_items_per_page" = 25},
  *     normalizationContext={"groups"={"user:read"}},
  *     denormalizationContext={"groups"={"user:write"}},
+ * )
+ * @ApiFilter(
+ *  SearchFilter::class,
+ *      properties={"username" : "partial", "matricule" : "exact","programme_avion":"partial"})
+ * @ApiFilter(
+ *  DateFilter::class, 
+ *      properties={"createdAt"}
+ * )
+ * @ApiFilter(
+ *  BooleanFilter::class, 
+ *      properties={"isActive"}
  * )
  * @UniqueEntity(fields={"username"})
  * @UniqueEntity(fields={"matricule"})

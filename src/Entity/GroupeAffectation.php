@@ -4,12 +4,15 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Controller\OrgaController;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\GroupeAffectationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
@@ -24,13 +27,20 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 *                  "path"="/groupe_affectations/{id}/addUsers",
 *                  "controller"=OrgaController::class,
 *                   "openapi_context"={
-*                       "summary"="Permet d'ajouter des utilisateurs au Groupe"    
+*                       "summary"="Allows you to add users to the Group"    
 *                   },
 *                  "denormalization_context"={"groups"={"gr_affect:addusers"}}
 *              }
 *   },
  *  normalizationContext={"groups"={"gr_affect:read"}},
  *  denormalizationContext={"groups"={"gr_affect:write"}},
+ * )
+ * @ApiFilter(
+ *  SearchFilter::class,
+ *      properties={"libelle" : "partial", "proprietaire":"partial"})
+ * @ApiFilter(
+ *  DateFilter::class, 
+ *      properties={"createdAt"}
  * )
  * @ORM\Entity(repositoryClass=GroupeAffectationRepository::class)
  * @UniqueEntity(fields={"libelle"})
