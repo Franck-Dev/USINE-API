@@ -60,7 +60,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
  * )
  * @ApiFilter(
  *  SearchFilter::class,
- *      properties={"username" : "partial", "matricule" : "exact","programme_avion":"partial"})
+ *      properties={"username" : "partial", "matricule" : "exact","programme_avion":"partial", "apiToken":"exact"})
  * @ApiFilter(
  *  DateFilter::class, 
  *      properties={"createdAt"}
