@@ -33,6 +33,8 @@ class SecurityController extends AbstractController
             return $this->json([
                 'message' => 'Mauvais mot de passe ou login']);  
         }else{
+            //Récupération de la dernière date de connexion
+            $lastConnexion=$this->getUser()->getLastCon();
             //Enregistrement de la date de connexion
             $this->getUser()->setLastCon(new \DateTimeImmutable);
             $this->_entityManager->persist($this->getUser());
@@ -40,6 +42,7 @@ class SecurityController extends AbstractController
             
             return $this->json([
                 'user' => $this->getUser(),
+                'lastCon' => $lastConnexion,
                 'apiToken' => $this->getUser()->getApiToken()]);
         } 
     }
