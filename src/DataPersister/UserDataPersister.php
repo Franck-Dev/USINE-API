@@ -45,6 +45,10 @@ class UserDataPersister implements ContextAwareDataPersisterInterface
         // Si création on renvoie la date de création, sinon la date de modification
         if ($data->getCreatedAt()) {
             $data->setUpdatedAt(new \DateTimeImmutable());
+            if ($data->getPassword()) {
+                $hash=$this->_encoder->hashPassword($data,$data->getPassword());
+                $data->setPassword($hash);
+            }
         } else {
             $data->setCreatedAt(new \DateTimeImmutable());
             $data->setIsActive(false);
